@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>filter_high_value_customers</name>
+    <description>Filters customers with a specific criteria and writes them to a new CSV file.</description>
+    <extended_description/>
+    <trans_version>1</trans_version>
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters>
+      <parameter>
+        <name>INPUT_CSV</name>
+        <default_value>customers.csv</default_value>
+        <description>Path to the input customers.csv file.</description>
+      </parameter>
+      <parameter>
+        <name>OUTPUT_CSV</name>
+        <default_value>high_value_customers</default_value>
+        <description>Base name for the output CSV file.</description>
+      </parameter>
+    </parameters>
+  </info>
+  <notepads>
+    <notepad>
+      <note>This transformation filters customers who are subscribed and have more than 5 total orders. It then writes the filtered data to a new CSV file.</note>
+      <xloc>100</xloc>
+      <yloc>50</yloc>
+      <width>751</width>
+      <heigth>25</heigth>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>100</fontcolorred>
+      <fontcolorgreen>100</fontcolorgreen>
+      <fontcolorblue>100</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+    </notepad>
+  </notepads>
+  <step>
+    <name>Read Customers</name>
+    <type>TextFileInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <header>Y</header>
+    <file>
+      <name>${INPUT_CSV}</name>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>Y</file_required>
+      <include_subfolders>N</include_subfolders>
+    </file>
+    <fields>
+      <field><name>id</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>first_name</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>last_name</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>email</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>gender</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>country</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>city</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>signup_date</name><type>Date</type><format>yyyy-MM-dd</format><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>last_login_date</name><type>Date</type><format>yyyy-MM-dd</format><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>total_orders</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>is_subscribed</name><type>Boolean</type><format/><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>customer_tier</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>source</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+    </fields>
+  </step>
+  <step>
+    <name>Filter Rows</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>total_orders</leftvalue>
+        <function>&gt;</function>
+        <rightvalue>5</rightvalue>
+      </condition>
+      <condition>
+        <negated>N</negated>
+        <operator>AND</operator>
+        <leftvalue>is_subscribed</leftvalue>
+        <function>=</function>
+        <rightvalue>true</rightvalue>
+      </condition>
+    </compare>
+  </step>
+  <step>
+    <name>Write Filtered Customers</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <force_ending_line>N</force_ending_line>
+    <header>Y</header>
+    <file>
+      <name>${OUTPUT_CSV}</name>
+      <extension>csv</extension>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <create_parent_folder>Y</create_parent_folder>
+      <do_not_create_file_folder>N</do_not_create_file_folder>
+      <is_command>N</is_command>
+    </file>
+    <fields/>
+  </step>
+  <step_error_handling>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <cluster_schema>
+    <name>cluster_schema_name</name>
+    <dynamic>N</dynamic>
+    <steps/>
+  </cluster_schema>
+  <partitioning_schemas>
+  </partitioning_schemas>
+  <partition-schema-name>partitions</partition-schema-name>
+  <order>
+    <hop>
+      <from>Read Customers</from>
+      <to>Filter Rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter Rows</from>
+      <to>Write Filtered Customers</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+</transformation>

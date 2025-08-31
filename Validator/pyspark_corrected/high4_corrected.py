@@ -1,0 +1,56 @@
+# Could not generate automatically.
+# Expected elements: {
+  "columns": [
+    "Write Sales Report",
+    "Phone 1",
+    "Color",
+    "City",
+    "OUTPUT_CSV",
+    "product_sales_and_customer_demographics",
+    "Customer Count",
+    "${CUSTOMERS_INPUT}",
+    "Currency",
+    "Website",
+    "Aggregate Sales by Country and Category",
+    "Read Customers",
+    "Stock",
+    "Sort Products",
+    "Internal ID",
+    "EAN",
+    "Last Name",
+    "First Name",
+    "Index",
+    "Availability",
+    "Country",
+    "CUSTOMERS_INPUT",
+    "Merge Customers and Products",
+    "Email",
+    "Phone 2",
+    "Category",
+    "LEADS_INPUT",
+    "Name",
+    "Customer Id",
+    "PRODUCTS_INPUT",
+    "Read Products",
+    "Price",
+    "${OUTPUT_CSV}",
+    "cluster_schema_name",
+    "Sort Customers",
+    "Company",
+    "Size",
+    "Subscription Date",
+    "Filter High-Price Products",
+    "${PRODUCTS_INPUT}",
+    "Description",
+    "Total Revenue",
+    "Brand"
+  ],
+  "filters": [
+    "N\n        Price\n        >\n        500"
+  ],
+  "joins": [
+    "MergeJoin"
+  ],
+  "calculations": [],
+  "string_ops": []
+}

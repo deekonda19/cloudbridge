@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<job name="Sample_Job"><entries><entry name="Read Suppliers"><table>PO_SUPPLIERS</table><columns>SUPPLIER_ID,NAME,STATUS</columns></entry><entry name="Sort Orders"><by>ORDER_DATE</by></entry><entry name="Filter Active Suppliers"><condition>STATUS = 'ACTIVE'</condition></entry><entry name="Output CSV"><path>output/orders.csv</path></entry></entries></job>

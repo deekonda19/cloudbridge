@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>calculate_org_age</name>
+    <description>Reads organizations.csv and calculates the age of each organization based on its founded year.</description>
+    <extended_description/>
+    <trans_version>1</trans_version>
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters>
+      <parameter>
+        <name>INPUT_CSV</name>
+        <default_value>organizations.csv</default_value>
+        <description>Path to the input organizations.csv file.</description>
+      </parameter>
+      <parameter>
+        <name>OUTPUT_CSV</name>
+        <default_value>orgs_with_age</default_value>
+        <description>Base name for the output CSV file.</description>
+      </parameter>
+    </parameters>
+  </info>
+  <notepads>
+    <notepad>
+      <note>This transformation calculates a new field, 'Years in Business', based on the 'Founded' year. It uses the current year (2025) for the calculation.</note>
+      <xloc>100</xloc>
+      <yloc>50</yloc>
+      <width>751</width>
+      <heigth>25</heigth>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>100</fontcolorred>
+      <fontcolorgreen>100</fontcolorgreen>
+      <fontcolorblue>100</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+    </notepad>
+  </notepads>
+  <step>
+    <name>Read Organizations</name>
+    <type>TextFileInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <header>Y</header>
+    <file>
+      <name>${INPUT_CSV}</name>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>Y</file_required>
+      <include_subfolders>N</include_subfolders>
+    </file>
+    <fields>
+      <field><name>Index</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>Organization Id</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Name</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Website</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Country</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Description</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Founded</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>Industry</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Number of employees</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+    </fields>
+  </step>
+  <step>
+    <name>Calculator</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>Years in Business</name>
+        <calculation_type>YEAR_TO_DATE</calculation_type>
+        <field_a>Founded</field_a>
+        <field_b/>
+        <field_c/>
+        <value>2025</value>
+        <conversion_mask>#</conversion_mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+  </step>
+  <step>
+    <name>Write Organizations with Age</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <force_ending_line>N</force_ending_line>
+    <header>Y</header>
+    <file>
+      <name>${OUTPUT_CSV}</name>
+      <extension>csv</extension>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <create_parent_folder>Y</create_parent_folder>
+      <do_not_create_file_folder>N</do_not_create_file_folder>
+      <is_command>N</is_command>
+    </file>
+    <fields/>
+  </step>
+  <step_error_handling>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <cluster_schema>
+    <name>cluster_schema_name</name>
+    <dynamic>N</dynamic>
+    <steps/>
+  </cluster_schema>
+  <partitioning_schemas>
+  </partitioning_schemas>
+  <partition-schema-name>partitions</partition-schema-name>
+  <order>
+    <hop>
+      <from>Read Organizations</from>
+      <to>Calculator</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculator</from>
+      <to>Write Organizations with Age</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+</transformation>

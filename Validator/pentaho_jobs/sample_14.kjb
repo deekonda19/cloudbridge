@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<job name="Sample_Job"><entries><entry name="Read Lines"><table>OE_ORDER_LINES_ALL</table><columns>LINE_ID,ORDER_ID,ITEM_ID,QUANTITY</columns></entry><entry name="Aggregate Orders"><group_by>CUSTOMER_ID</group_by><agg>SUM(QUANTITY)</agg></entry><entry name="Read Orders"><table>OE_ORDER_HEADERS_ALL</table><columns>ORDER_ID,CUSTOMER_ID,ORDER_DATE</columns></entry><entry name="Output CSV"><path>output/orders.csv</path></entry></entries></job>
