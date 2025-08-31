@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cloud Bridge Converter</title>
+  <link rel="icon" type="image/png" href="https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/6f0553f0-7447-424d-bc9f-e77a68e9de3b.png?w=128&h=128&fit=max&dpr=3&auto=format&q=50">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background: #f9f9f9;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 15px;
+    }
+    input[type="text"], select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .checkboxes {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    .checkboxes label {
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+    }
+    .checkboxes input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2); /* bigger checkboxes */
+    }
+    button {
+      background: #007BFF;
+      color: white;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 12px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+  </style>
+  <script>
+    async function fetchModels() {
+      const backend = document.getElementById("backend").value;
+      const modelSelect = document.getElementById("modelSelect");
+      const modelInput = document.getElementById("model");
+      const useLatest = document.getElementById("use_latest");
+	  const skipauto = document.getElementById("no_auto_train");
+
+      // Toggle "Use Latest" for HF only
+      if (backend === "hf") {
+        useLatest.disabled = false;
+      } else {
+        useLatest.checked = false;
+        useLatest.disabled = true;
+      }
+	  
+	  if (backend === "hf") {
+        skipauto.disabled = false;
+      } else {
+        skipauto.checked = false;
+        skipauto.disabled = true;
+      }
+
+      // Load models from backend
+      try {
+        const res = await fetch(`/models?backend=${encodeURIComponent(backend)}`);
+        const data = await res.json();
+        const models = data.models || [];
+
+        // Populate dropdown
+        modelSelect.innerHTML = "";
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "-- Select detected model --";
+        modelSelect.appendChild(placeholder);
+
+        models.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m;
+          modelSelect.appendChild(opt);
+        });
+
+        // Add "Custom" option
+        const customOpt = document.createElement("option");
+        customOpt.value = "__custom__";
+        customOpt.textContent = "Custom (type below)";
+        modelSelect.appendChild(customOpt);
+
+        // Reset input enable/disable state
+        modelSelect.value = "";
+        modelInput.value = "";
+        modelInput.disabled = false;
+      } catch (e) {
+        console.error("Model listing failed", e);
+      }
+    }
+
+    function onModelSelectChange() {
+      const modelSelect = document.getElementById("modelSelect");
+      const modelInput = document.getElementById("model");
+
+      const val = modelSelect.value;
+      if (val && val !== "__custom__") {
+        // A detected model is selected -> grey out manual input
+        modelInput.value = "";
+        modelInput.disabled = true;
+      } else {
+        // Allow manual entry
+        modelInput.disabled = false;
+      }
+    }
+
+async function startConversion() {
+  const folderInput = document.getElementById("folder");
+  const backend = document.getElementById("backend").value;
+  const modelSelect = document.getElementById("modelSelect");
+  const modelInput = document.getElementById("model");
+  const use_latest = document.getElementById("use_latest").checked;
+  const no_auto_train = document.getElementById("no_auto_train").checked;
+
+  // ✅ Fix: extract folder name from relative path
+  let folderPath = "";
+  if (folderInput.files.length > 0) {
+    const firstFile = folderInput.files[0];
+    if (firstFile.webkitRelativePath) {
+      folderPath = firstFile.webkitRelativePath.split("/")[0]; 
+    } else {
+      folderPath = firstFile.name; // fallback if no relative path
+    }
+  }
+
+  // Determine model to send: dropdown selection OR manual
+  let model = "";
+  if (modelSelect.value && modelSelect.value !== "__custom__") {
+    model = modelSelect.value;
+  } else {
+    model = modelInput.value.trim();
+  }
+
+  if (!folderPath || !backend || !model) {
+    alert("Please select folder, backend, and model.");
+    return;
+  }
+
+  document.getElementById("status").innerText = "Converting... Please wait ⏳";
+
+  const response = await fetch("/convert", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      folder: folderPath,
+      backend,
+      model,
+      use_latest,
+      no_auto_train
+    })
+  });
+
+  const result = await response.json();
+  if (result.status === "success") {
+    document.getElementById("status").innerText = "✅ " + result.message;
+  } else {
+    document.getElementById("status").innerText = "❌ " + result.message;
+  }
+}
+
+
+    // Initialize on load
+    window.addEventListener("DOMContentLoaded", fetchModels);
+  </script>
+</head>
+<body>
+  <div class="container">
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px; text-align: center;">
+  <img src="https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/6f0553f0-7447-424d-bc9f-e77a68e9de3b.png?w=128&h=128&fit=max&dpr=3&auto=format&q=50" 
+       alt="Cloud Converter Icon" 
+       width="50" height="50" />
+  <h1 style="margin: 0;">Cloud Bridge Converter</h1>
+</div>
+
+    <label>Select Pentaho Folder:</label>
+    <input type="file" id="folder" webkitdirectory directory />
+    <div class="hint">Choose a folder containing .ktr/.kjb files.</div>
+
+    <div class="row">
+      <div>
+        <label>Choose Backend:</label>
+        <select id="backend" onchange="fetchModels()">
+          <option value="hf">Hugging Face</option>
+          <option value="gpt4all">GPT4All</option>
+          <option value="ollama">Ollama</option>
+        </select>
+      </div>
+      <div>
+        <label>Detected Models:</label>
+        <select id="modelSelect" onchange="onModelSelectChange()">
+          <!-- filled dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <label>Model (manual):</label>
+    <input type="text" id="model" placeholder="Enter model name/path if not using the list" />
+
+    <div class="checkboxes">
+      <label><input type="checkbox" id="use_latest"> Use Latest (HF only)</label>
+      <label><input type="checkbox" id="no_auto_train"> Skip Auto Train</label>
+    </div>
+
+    <button type="button" onclick="startConversion()">Convert</button>
+
+    <div id="status"></div>
+  </div>
+</body>
+</html>
