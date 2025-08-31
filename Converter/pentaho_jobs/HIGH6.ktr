@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>organization_industry_report</name>
+    <description>This transformation aggregates and analyzes organization data, filtering for large organizations and creating a summary report by industry.</description>
+    <extended_description/>
+    <trans_version>1</trans_version>
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters>
+      <parameter>
+        <name>ORGS_INPUT</name>
+        <default_value>organizations.csv</default_value>
+        <description>Path to the organizations.csv file.</description>
+      </parameter>
+      <parameter>
+        <name>OUTPUT_CSV</name>
+        <default_value>large_orgs_by_industry</default_value>
+        <description>Base name for the output CSV file.</description>
+      </parameter>
+    </parameters>
+  </info>
+  <notepads>
+    <notepad>
+      <note>This transformation reads organizations data, filters for large companies (more than 5000 employees), and then groups the data by industry to count the number of companies and find the average number of employees per industry.</note>
+      <xloc>100</xloc>
+      <yloc>50</yloc>
+      <width>849</width>
+      <heigth>50</heigth>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>100</fontcolorred>
+      <fontcolorgreen>100</fontcolorgreen>
+      <fontcolorblue>100</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+    </notepad>
+  </notepads>
+  <step>
+    <name>Read Organizations</name>
+    <type>TextFileInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <header>Y</header>
+    <file>
+      <name>${ORGS_INPUT}</name>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>Y</file_required>
+      <include_subfolders>N</include_subfolders>
+    </file>
+    <fields>
+      <field><name>Index</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>Organization Id</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Name</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Website</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Country</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Description</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Founded</name><type>Integer</type><format>#</format><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>Industry</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Number of employees</name><type>Integer</type><format>#</format><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+    </fields>
+  </step>
+  <step>
+    <name>Filter Large Organizations</name>
+    <type>FilterRows</type>
+    <description>Filters for organizations with more than 5000 employees.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>Number of employees</leftvalue>
+        <function>&gt;</function>
+        <rightvalue>5000</rightvalue>
+      </condition>
+    </compare>
+  </step>
+  <step>
+    <name>Group By Industry</name>
+    <type>GroupBy</type>
+    <description>Groups the filtered data by Industry and calculates key metrics.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <group>
+        <field><name>Industry</name></field>
+      </group>
+      <aggregate>
+        <field><name>Company Count</name><subject>Name</subject><type>COUNT_ANY</type></field>
+        <field><name>Average Employees</name><subject>Number of employees</subject><type>AVERAGE</type></field>
+        <field><name>Total Employees</name><subject>Number of employees</subject><type>SUM</type></field>
+      </aggregate>
+    </fields>
+  </step>
+  <step>
+    <name>Write Industry Report</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <force_ending_line>N</force_ending_line>
+    <header>Y</header>
+    <file>
+      <name>${OUTPUT_CSV}</name>
+      <extension>csv</extension>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <create_parent_folder>Y</create_parent_folder>
+      <do_not_create_file_folder>N</do_not_create_file_folder>
+      <is_command>N</is_command>
+    </file>
+    <fields/>
+  </step>
+  <step_error_handling>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <cluster_schema>
+    <name>cluster_schema_name</name>
+    <dynamic>N</dynamic>
+    <steps/>
+  </cluster_schema>
+  <partitioning_schemas>
+  </partitioning_schemas>
+  <partition-schema-name>partitions</partition-schema-name>
+  <order>
+    <hop>
+      <from>Read Organizations</from>
+      <to>Filter Large Organizations</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter Large Organizations</from>
+      <to>Group By Industry</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Group By Industry</from>
+      <to>Write Industry Report</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+</transformation>
