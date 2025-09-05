@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>merge_customers_products</name>
+    <description>Merges customer data with product data on a simulated key to enrich the customer dataset.</description>
+    <extended_description/>
+    <trans_version>1</trans_version>
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters>
+      <parameter>
+        <name>CUSTOMERS_INPUT</name>
+        <default_value>customers.csv</default_value>
+        <description>Path to the customers.csv file.</description>
+      </parameter>
+      <parameter>
+        <name>PRODUCTS_INPUT</name>
+        <default_value>products.csv</default_value>
+        <description>Path to the products.csv file.</description>
+      </parameter>
+      <parameter>
+        <name>OUTPUT_CSV</name>
+        <default_value>merged_data</default_value>
+        <description>Base name for the output CSV file.</description>
+      </parameter>
+    </parameters>
+  </info>
+  <notepads>
+    <notepad>
+      <note>This transformation simulates a merge join. It sorts both datasets and then merges them on a common key (customer id = product index). This allows you to combine data from different sources.</note>
+      <xloc>100</xloc>
+      <yloc>50</yloc>
+      <width>849</width>
+      <heigth>37</heigth>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>100</fontcolorred>
+      <fontcolorgreen>100</fontcolorgreen>
+      <fontcolorblue>100</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+    </notepad>
+  </notepads>
+  <step>
+    <name>Read Customers</name>
+    <type>TextFileInput</type>
+    <description>This step reads the customers.csv file.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <header>Y</header>
+    <file>
+      <name>${CUSTOMERS_INPUT}</name>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>Y</file_required>
+      <include_subfolders>N</include_subfolders>
+    </file>
+    <fields>
+      <field><name>id</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>first_name</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>last_name</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>email</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>gender</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>country</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>city</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>signup_date</name><type>Date</type><format>yyyy-MM-dd</format><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>last_login_date</name><type>Date</type><format>yyyy-MM-dd</format><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>total_orders</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>is_subscribed</name><type>Boolean</type><format/><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>customer_tier</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>source</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+    </fields>
+  </step>
+  <step>
+    <name>Read Products</name>
+    <type>TextFileInput</type>
+    <description>This step reads the products.csv file.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <header>Y</header>
+    <file>
+      <name>${PRODUCTS_INPUT}</name>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>Y</file_required>
+      <include_subfolders>N</include_subfolders>
+    </file>
+    <fields>
+      <field><name>Index</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>Name</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Description</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Brand</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Category</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Price</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>Currency</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Stock</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>EAN</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+      <field><name>Color</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Size</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Availability</name><type>String</type><currency/><decimal/><group/><length>-1</length><precision>-1</precision><trim_type>both</trim_type><repeat>N</repeat></field>
+      <field><name>Internal ID</name><type>Integer</type><format>#</format><currency/><decimal>.</decimal><group>,</group><length>-1</length><precision>-1</precision><trim_type>none</trim_type><repeat>N</repeat></field>
+    </fields>
+  </step>
+  <step>
+    <name>Sort Customers</name>
+    <type>SortRows</type>
+    <description>Sorts the customers data by 'id' before the merge join.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory_limit>25</free_memory_limit>
+    <fast_sort>N</fast_sort>
+    <compress>N</compress>
+    <fields>
+      <field><name>id</name><ascending>Y</ascending><case_sensitive>N</case_sensitive></field>
+    </fields>
+  </step>
+  <step>
+    <name>Sort Products</name>
+    <type>SortRows</type>
+    <description>Sorts the products data by 'Index' before the merge join.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory_limit>25</free_memory_limit>
+    <fast_sort>N</fast_sort>
+    <compress>N</compress>
+    <fields>
+      <field><name>Index</name><ascending>Y</ascending><case_sensitive>N</case_sensitive></field>
+    </fields>
+  </step>
+  <step>
+    <name>Merge Join</name>
+    <type>MergeJoin</type>
+    <description>Merges the sorted customer and product data on their respective keys.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <join_type>INNER</join_type>
+    <step1>Sort Customers</step1>
+    <step2>Sort Products</step2>
+    <keys_1>
+      <key><name>id</name></key>
+    </keys_1>
+    <keys_2>
+      <key><name>Index</name></key>
+    </keys_2>
+  </step>
+  <step>
+    <name>Write Merged Data</name>
+    <type>TextFileOutput</type>
+    <description>Writes the final merged dataset to a new CSV file.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <force_ending_line>N</force_ending_line>
+    <header>Y</header>
+    <file>
+      <name>${OUTPUT_CSV}</name>
+      <extension>csv</extension>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <create_parent_folder>Y</create_parent_folder>
+      <do_not_create_file_folder>N</do_not_create_file_folder>
+      <is_command>N</is_command>
+    </file>
+    <fields/>
+  </step>
+  <step_error_handling>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <cluster_schema>
+    <name>cluster_schema_name</name>
+    <dynamic>N</dynamic>
+    <steps/>
+  </cluster_schema>
+  <partitioning_schemas>
+  </partitioning_schemas>
+  <partition-schema-name>partitions</partition-schema-name>
+  <order>
+    <hop>
+      <from>Read Customers</from>
+      <to>Sort Customers</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Read Products</from>
+      <to>Sort Products</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort Customers</from>
+      <to>Merge Join</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort Products</from>
+      <to>Merge Join</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Merge Join</from>
+      <to>Write Merged Data</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+</transformation>
