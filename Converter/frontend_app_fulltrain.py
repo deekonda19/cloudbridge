@@ -126,7 +126,7 @@ def convert():
 
     cmd = [
         "python",
-        "smart_pipeline_autotrain_latest_final_ollamainfer.py",
+        "smart_pipeline_autotrain_latest_final_fulltrain.py",
         "--input", folder,
         "--backend", backend,
         "--model", model,
